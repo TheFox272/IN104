@@ -1,12 +1,13 @@
+
 #include "qlearning.h"
 #include "mazeEnv.h"
+#include <colored_output.h>
 
 
-
-double learning_rate = 0.5;
-int number_episode = 10000;
-double return_rate = 0.99;
-int horizon = 100000;
+double learning_rate = 0.6;
+int number_episode = 100000;
+double return_rate = 0.9;
+int horizon = 10000;
 float epsilon = 0.5;
 
 
@@ -86,7 +87,7 @@ int best_action(int s){
 }
 
 void epsilon_greedy(){
-    for (int i = 0; i< number_episode; i++ ){
+    for (int i = 0 ; i < number_episode ; i++){
         // printf("episode : %d \n", i);
 
         int s = start_col + start_row*cols; //Initialization of the state
@@ -131,7 +132,7 @@ void epsilon_greedy(){
             s = next_s;
             n++;
         }
-
+        
     }
 
 }
@@ -160,7 +161,9 @@ void visualise (){
             }
             else
             {
+                red();
                 printf("%c ", mazeEnv[i][j]);
+                reset();
             }
         }
         printf("\n");

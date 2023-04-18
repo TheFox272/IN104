@@ -1,3 +1,4 @@
+
 #include "functions.h"
 
 int min(int a, int b){
