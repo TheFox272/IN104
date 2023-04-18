@@ -15,7 +15,7 @@ int main()
     printf("number of actions :  %d \n", number_actions);  // should return 4 since they are 4 actions : up, down, left, right
     mazeEnv_render_pos();  // displays the maze at start (once loaded from the txt file)
     init_q();
-    epsilon_greedy();
+    botzmann_exploration();
     // print_q();
     visualise();
     // dfs(start_row,start_col);

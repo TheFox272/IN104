@@ -1,7 +1,8 @@
 
 #include "qlearning.h"
 #include "mazeEnv.h"
-#include <colored_output.h>
+#include "colored_output.h"
+#include <math.h> 
 
 
 double learning_rate = 0.7;
@@ -120,6 +121,75 @@ void epsilon_greedy(){
                 next_action = best_action(s);
             }
 
+            // printf("action : %d \n", n);
+            // printf("%d \n", next_action);
+
+            //Updating Q with the new state
+        
+            EnvOut = mazeEnv_step(int_to_action(next_action));
+            next_s = EnvOut.new_col + EnvOut.new_row*cols;
+            done = EnvOut.done;
+
+            // mazeEnv_render_pos();
+            
+
+            q[s][next_action] = q[s][next_action] + learning_rate*(EnvOut.reward + return_rate*max_actions(next_s) - q[s][next_action]);
+            s = next_s;
+            n++;
+        }
+        
+    }
+
+}
+
+void botzmann_exploration(){
+    for (int i = 0 ; i < number_episode ; i++){
+
+        printf("\r%.5f %%", 100 * (float)i/number_episode);
+        fflush(stdout);
+        // printf("episode : %d \n", i);
+
+        int s = start_col + start_row*cols; //Initialization of the state
+        int n = 0; //Number of actions performed in the episode
+        int done = 0;
+
+        //Initialization of the variables 
+        int next_action;
+        float tirage;
+        struct envOutput EnvOut;
+        int next_s = s;
+        srand(time(NULL));
+        float total_exp;
+        float e0;
+        float e1;
+        float e2;
+       
+        
+
+
+        //Pick an action unless the goal is reached 
+        while (n<horizon && done == 0){
+
+            //Pick an action according to the Botzmann exploration
+            total_exp = exp(q[s][0]) + exp(q[s][1]) + exp(q[s][2]) + exp(q[s][3]);
+            e0 =  exp(q[s][0])/total_exp;
+            e1 =  exp(q[s][1])/total_exp;
+            e2 =  exp(q[s][2])/total_exp;
+
+            tirage = rand() / (RAND_MAX + 1.0);
+            
+            if (tirage<e0){
+                next_action = 0;
+            }
+            else if (tirage< (e0 + e1)){
+                next_action = 1;
+            }
+            else if (tirage< (e0 + e1 + e2)){
+                next_action = 2;
+            }
+            else {
+                next_action = 3;
+            }
             // printf("action : %d \n", n);
             // printf("%d \n", next_action);
 
