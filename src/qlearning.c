@@ -4,10 +4,10 @@
 #include <colored_output.h>
 
 
-double learning_rate = 0.6;
-int number_episode = 100000;
-double return_rate = 0.9;
-int horizon = 10000;
+double learning_rate = 0.7;
+int number_episode = 1000000;
+double return_rate = 0.999;
+int horizon = 100;
 float epsilon = 0.5;
 
 
@@ -65,7 +65,7 @@ action int_to_action(int i){
 
 double max_actions(int s){
     double max = q[s][0];
-    for (int j =1; j<number_actions; j++){
+    for (int j=1; j<number_actions; j++){
         if (q[s][j]>max){
             max = q[s][j];
         }
@@ -78,8 +78,9 @@ double max_actions(int s){
 int best_action(int s){
     double max = q[s][0];
     int id_max = 0;
-    for (int j =1; j<number_actions; j++){
+    for (int j=1; j<number_actions; j++){
         if (q[s][j]>max){
+            max = q[s][j];
             id_max = j;
         }
     }
@@ -88,11 +89,14 @@ int best_action(int s){
 
 void epsilon_greedy(){
     for (int i = 0 ; i < number_episode ; i++){
+
+        printf("\r%.5f %%", 100 * (float)i/number_episode);
+        fflush(stdout);
         // printf("episode : %d \n", i);
 
         int s = start_col + start_row*cols; //Initialization of the state
         int n = 0; //Number of actions performed in the episode
-        int done =0;
+        int done = 0;
 
         //Initialization of the variables 
         int next_action;
@@ -128,7 +132,7 @@ void epsilon_greedy(){
             // mazeEnv_render_pos();
             
 
-            q[s][next_action]= q[s][next_action] + learning_rate*(EnvOut.reward + return_rate*max_actions(next_s) - q[s][next_action]);
+            q[s][next_action] = q[s][next_action] + learning_rate*(EnvOut.reward + return_rate*max_actions(next_s) - q[s][next_action]);
             s = next_s;
             n++;
         }
@@ -139,10 +143,19 @@ void epsilon_greedy(){
 
 
 void visualise (){
+    printf("\n");
     for (int i = 0; i < rows; i++){
         for (int j = 0; j < cols; j++){
             if (mazeEnv[i][j] == 'o' || mazeEnv[i][j] == 'k')
             {
+                if (max_actions(j + i*cols) > 0)
+                {
+                    green();
+                }
+                else
+                {
+                    red();
+                }
                 switch (best_action(j + i*cols))
                 {
                 case 0:
@@ -161,10 +174,10 @@ void visualise (){
             }
             else
             {
-                red();
+                blue();
                 printf("%c ", mazeEnv[i][j]);
-                reset();
             }
+            reset();
         }
         printf("\n");
     }

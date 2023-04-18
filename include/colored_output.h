@@ -5,11 +5,17 @@
 
 void black();
 
+void white();
+
 void red();
 
 void green();
 
 void blue();
+
+void purple();
+
+void cyan();
 
 void reset();
 
