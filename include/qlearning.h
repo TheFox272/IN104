@@ -28,6 +28,8 @@ int best_action(int s);
 
 void epsilon_greedy();
 
+void botzmann_exploration();
+
 void visualise();
 
 void print_q();

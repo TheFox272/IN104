@@ -5,11 +5,11 @@
 #include <math.h> 
 
 
-double learning_rate = 0.7;
-int number_episode = 1000000;
-double return_rate = 0.999;
-int horizon = 100;
-float epsilon = 0.5;
+double learning_rate = 0.6;
+int number_episode = 1000;
+double return_rate = 1.0;
+int horizon = 10000;
+float epsilon;
 
 
 void init_q()
@@ -101,14 +101,16 @@ void epsilon_greedy(){
 
         //Initialization of the variables 
         int next_action;
-        float tirage;
+        double tirage;
         struct envOutput EnvOut;
         int next_s = s;
         srand(time(NULL));
 
 
         //Pick an action unless the goal is reached 
-        while (n<horizon && done == 0){
+        while (n<horizon){
+
+            if (epsilon != 1) epsilon = 0.1 + 0.9 * n / horizon;
 
             //Pick an action according to the epsilon greedy algorithm
 
@@ -129,6 +131,11 @@ void epsilon_greedy(){
             EnvOut = mazeEnv_step(int_to_action(next_action));
             next_s = EnvOut.new_col + EnvOut.new_row*cols;
             done = EnvOut.done;
+
+            if (done == 1)
+            {
+                epsilon = 1;
+            }
 
             // mazeEnv_render_pos();
             
@@ -155,20 +162,18 @@ void botzmann_exploration(){
 
         //Initialization of the variables 
         int next_action;
-        float tirage;
+        double tirage;
         struct envOutput EnvOut;
         int next_s = s;
         srand(time(NULL));
-        float total_exp;
-        float e0;
-        float e1;
-        float e2;
-       
-        
+        double total_exp;
+        double e0;
+        double e1;
+        double e2;
 
 
         //Pick an action unless the goal is reached 
-        while (n<horizon && done == 0){
+        while (n<horizon){
 
             //Pick an action according to the Botzmann exploration
             total_exp = exp(q[s][0]) + exp(q[s][1]) + exp(q[s][2]) + exp(q[s][3]);
@@ -178,13 +183,13 @@ void botzmann_exploration(){
 
             tirage = rand() / (RAND_MAX + 1.0);
             
-            if (tirage<e0){
+            if (tirage < e0){
                 next_action = 0;
             }
-            else if (tirage< (e0 + e1)){
+            else if (tirage < (e0 + e1)){
                 next_action = 1;
             }
-            else if (tirage< (e0 + e1 + e2)){
+            else if (tirage < (e0 + e1 + e2)){
                 next_action = 2;
             }
             else {
@@ -199,9 +204,13 @@ void botzmann_exploration(){
             next_s = EnvOut.new_col + EnvOut.new_row*cols;
             done = EnvOut.done;
 
+            if (done == 1)
+            {
+                epsilon = 1;
+            }
+
             // mazeEnv_render_pos();
             
-
             q[s][next_action] = q[s][next_action] + learning_rate*(EnvOut.reward + return_rate*max_actions(next_s) - q[s][next_action]);
             s = next_s;
             n++;
@@ -218,7 +227,7 @@ void visualise (){
         for (int j = 0; j < cols; j++){
             if (mazeEnv[i][j] == 'o' || mazeEnv[i][j] == 'k')
             {
-                if (max_actions(j + i*cols) > 0)
+                if (max_actions(j + i*cols) > 0.1)
                 {
                     green();
                 }

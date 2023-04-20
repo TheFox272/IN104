@@ -133,7 +133,7 @@ void mazeEnv_reset()
 // faire une action &observer récompense et où on se trouve
 envOutput mazeEnv_step(action a)
 {
-    int reward = 0;
+    int reward = -1;
     int done = 0;
     envOutput stepOut;  // cf /mazeEnv.h/
     mazeEnv[state_row][state_col] = 'o';
@@ -144,7 +144,10 @@ envOutput mazeEnv_step(action a)
         {
             state_row -= 1;
         }
-        reward = -1; //added
+        else
+        {
+            reward = -100;
+        }
     }
     else if (a == down)
     {
@@ -153,7 +156,10 @@ envOutput mazeEnv_step(action a)
         {
             state_row += 1;
         }
-        reward = -1;  // added 
+        else
+        {
+            reward = -100;
+        }
     }
     else if (a == right)
     {
@@ -162,7 +168,10 @@ envOutput mazeEnv_step(action a)
         {
             state_col += 1;
         }
-        reward = -1; //added
+        else
+        {
+            reward = -100;
+        }
     }
     else if (a == left)
     {
@@ -171,8 +180,16 @@ envOutput mazeEnv_step(action a)
         {
             state_col -= 1;
         }
-        reward = -1; //added
+        else
+        {
+            reward = -100;
+        }
     }
+
+    // if (mazeEnv[state_row][state_col] == 'o')
+    // {
+    //     reward = -10;
+    // }
 
     if ((state_row == goal_row) && (state_col == goal_col))  // if current position is goal position
     {
@@ -184,7 +201,6 @@ envOutput mazeEnv_step(action a)
     stepOut.done = done;  // done only if on the goal (to use later if other cases can end the explorer)
     stepOut.new_col = state_col;  // on which column the explorer ends after this action
     stepOut.new_row = state_row;  // on which row the explorer ends after this action
-    
     
 
     return stepOut;
