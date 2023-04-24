@@ -1,9 +1,6 @@
-
 #include "qlearning.h"
-#include "mazeEnv.h"
-#include "colored_output.h"
-#include <math.h> 
 
+/*----------------------------------------------------------------------------------------------------*/
 
 double learning_rate = 0.6;
 int number_episode = 1000;

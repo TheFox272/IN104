@@ -1,10 +1,13 @@
-
 #ifndef MAZEENV_H
 #define MAZEENV_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+#include "functions.h"
+
+/*----------------------------------------------------------------------------------------------------*/
 
 extern char** mazeEnv;
 extern int** visited;

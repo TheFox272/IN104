@@ -1,9 +1,6 @@
-
-#include "qlearning.h"
 #include "main.h"
 
-
-
+/*----------------------------------------------------------------------------------------------------*/
 
 int main()
 {
@@ -15,7 +12,7 @@ int main()
     printf("number of actions :  %d \n", number_actions);  // should return 4 since they are 4 actions : up, down, left, right
     mazeEnv_render_pos();  // displays the maze at start (once loaded from the txt file)
     init_q();
-    botzmann_exploration();
+    epsilon_greedy();
     // print_q();
     visualise();
     // dfs(start_row,start_col);

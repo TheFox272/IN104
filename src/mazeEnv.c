@@ -1,7 +1,6 @@
-
 #include "mazeEnv.h"
-#include "functions.h"
 
+/*----------------------------------------------------------------------------------------------------*/
 
 // must be called to initialize /mazeEnv/ (already used in /mazeEnv_make/)
 void alloc_mazeEnv()

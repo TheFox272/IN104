@@ -1,43 +1,43 @@
+CC = gcc
+CFLAGS = -Wall -Werror
+INC = include/
+LIBS = -lm
+SRC = src/
+BUILD = build/
+EXEC = main
 
 
-#CC = gcc
-#CFLAGS = -Wall -Werror
-# TODO : redo this Makefile in a better way
+all: $(BUILD)$(EXEC)
 
-src/main		: clean src/main.o src/qlearning.o src/colored_output.o src/dfs.o src/functions.o src/mazeEnv.o
-	gcc -I include/ -g -o src/main.x src/main.o src/qlearning.o src/colored_output.o src/dfs.o src/functions.o src/mazeEnv.o -Wall -lm
+$(BUILD)$(EXEC): $(BUILD)main.o $(BUILD)mazeEnv.o $(BUILD)qlearning.o $(BUILD)colored_output.o $(BUILD)functions.o
+	$(CC) $(CFLAGS)  -g $^ -o $@ $(LIBS)
+
+$(BUILD)main.o: $(SRC)main.c $(INC)mazeEnv.h $(INC)qlearning.h 
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -I $(INC) -g -c $< -o $@
+
+$(BUILD)functions.o: $(SRC)functions.c
+	$(CC) $(CFLAGS) -I $(INC) -g -c $< -o $@
+
+$(BUILD)colored_output.o: $(SRC)colored_output.c
+	$(CC) $(CFLAGS) -I $(INC) -g -c $< -o $@
+
+$(BUILD)mazeEnv.o:  $(SRC)mazeEnv.c $(INC)functions.h
+	$(CC) $(CFLAGS) -I $(INC) -g -c $< -o $@
+
+$(BUILD)dfs.o: $(SRC)dfs.c $(INC)mazeEnv.h
+	$(CC) $(CFLAGS) -I $(INC) -g -c $< -o $@
+
+$(BUILD)qlearning.o: $(SRC)qlearning.c $(INC)mazeEnv.h $(INC)colored_output.h
+	$(CC) $(CFLAGS) -I $(INC) -g -c $< -o $@
 
 
-src/main.o      : src/main.c include/main.h
-	gcc -I include/ -g -o src/main.o -c src/main.c -Wall
-
-src/qlearning.o	: src/qlearning.c include/qlearning.h
-	gcc -I include/ -g -o src/qlearning.o -c src/qlearning.c -Wall 
-
-src/colored_output.o : src/colored_output.c include/colored_output.h
-	gcc -I include/ -g -o src/colored_output.o -c src/colored_output.c -Wall
-
-src/dfs.o       : src/dfs.c include/dfs.h include/mazeEnv.h
-	gcc -I include/ -g -o src/dfs.o -c src/dfs.c -Wall
-
-src/functions.o : src/functions.c include/functions.h
-	gcc -I include/ -g -o src/functions.o -c src/functions.c -Wall
-
-src/mazeEnv.o   : src/mazeEnv.c include/mazeEnv.h
-	gcc -I include/ -g -o src/mazeEnv.o -c src/mazeEnv.c -Wall
-
+.PHONY: clean
 clean:
-	find . -type f -name "*.o" -delete
+	rm -r $(BUILD)
 
-realclean: clean
-	find . -type f -name "*.x" -delete
+# clean:
+# 	find . -type f -name "*.o" -delete
 
-
-
-
-
-
-
-
-
-
+# realclean: clean
+# 	find . -type f -name "*.x" -delete

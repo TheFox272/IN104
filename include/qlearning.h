@@ -1,7 +1,12 @@
 #ifndef QLEARNING_H
 #define QLEARNING_H
 
-#include <dfs.h>
+#include <math.h> 
+
+#include "mazeEnv.h"
+#include "colored_output.h"
+
+/*----------------------------------------------------------------------------------------------------*/
 
 extern char** mazeEnv;
 extern int** visited;

@@ -1,6 +1,6 @@
-
 #include "dfs.h"
 
+/*----------------------------------------------------------------------------------------------------*/
 
 // Depth First Search :
 // - if it find a way to the goal : adds crumbs on /visited/ positions that leads to the goal and returns 1

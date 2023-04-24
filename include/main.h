@@ -1,6 +1,11 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include "mazeEnv.h"
+#include "qlearning.h"
+
+/*----------------------------------------------------------------------------------------------------*/
+
 char** mazeEnv;
 int** visited;
 int rows;
