@@ -1,23 +1,44 @@
-# Reinforcement Learning Project : Maze 
-
-Here's our repository dedicated to Reinforcement Learning. A small project will be conducted and used as a course project at ENSTA Paris.
+# Reinforcement Learning Project (IN104)
 
 
-We implemented two Reinforcement Learning methods that revolves around the Q-learning algorihm and used them to exit a maze. Those two methods are the epsilon-greedy and the Boltzmann exploration.
+## Presentation
+
+This is a repository dedicated to our Reinforcement Learning (RL) project of ENSTA's IN104 course. It is made of 2 parts :
+- [x] An introduction to the concept of RL : maze resolution
+- [ ] A personal project using RL : *to determine*
+
+Our RL methods revolve around the **Q-learning** algorithm. Up to now, we implemented 2 versions of it :
+- ε-greedy
+- Boltzmann exploration
 
 
-You'll find here several folders :
+## Repository structure
 
-/Include is for the headers
-
-/data is for the data input
-
-/src is for the algorithms and the environnements by themselves.
-
-/build is a folder created during the make to stock .o and .x files
+This repository is made of several folders:
+- **./data** is where you'll find all the data files (raw .txt files, .png image files, ...)
+- **./include** is where you'll find all the headers (.h files)
+- **./src** is where you'll find all the C code (.c files)
 
 
-Operation instructions : 
+## Building and running
+
+To build the executable (currently only the maze one is available) and run it, use the following instructions :
+1. Make sure you're in the **IN104** folder using **pwd** in the cmd. If not, move to it using **cd**
+2. Use the Makefile which will create a **./build** folder and store the executable **main** as well as all the files linked to its creation (.o files)
+```
 make
-cd build/
+```
+3. To run the code, go to the **./build** folder and run the **main** file
+```
+cd build
 ./main
+```
+4. Once you're done, make sure to clean everything : go back to **IN104** and use the Makefile clean option (this will delete the whole **./build** folder)
+```
+cd ..
+make clean
+```
+
+
+
+
