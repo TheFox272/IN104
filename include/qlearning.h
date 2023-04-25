@@ -23,7 +23,7 @@ extern double** q;
 
 void init_q();
 
-int actions_to_int(action a);
+int action_to_int(action a);
 
 action int_to_action(int i);
 

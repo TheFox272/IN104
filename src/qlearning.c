@@ -1,14 +1,17 @@
 #include "qlearning.h"
 
 /*----------------------------------------------------------------------------------------------------*/
+// CONSTANTS INITIALIZATION
 
-double learning_rate = 0.6;
-int number_episode = 1000;
-double return_rate = 1.0;
-int horizon = 10000;
-float epsilon;
+double learning_rate = 0.6; // the speed at which the weights of q will be changed (cf alpha in the lesson)
+int number_episode = 1000; // the number of episodes that will occur to balance q
+double return_rate = 1.0;  // cf gamma in the lesson
+int horizon = 10000;  // the maximum number of moves the explorer will perform each episode
+float epsilon; // used by the epsilon greedy method
 
+/*----------------------------------------------------------------------------------------------------*/
 
+// must be called to initialize /q/
 void init_q()
 {
     q = malloc(rows * cols * sizeof(double *));
@@ -22,8 +25,8 @@ void init_q()
     
 }
 
-//transform each actions into a specific int 
-int actions_to_int(action a){
+// takes an action as an input, and returns the corresponding int
+int action_to_int(action a){
     if (a == up)
     {
         return 0;
@@ -42,7 +45,7 @@ int actions_to_int(action a){
     }
 }
 
-//Do the opposite transformation 
+// takes an int as an input, and returns the corresponding action
 action int_to_action(int i){
     if (i==0){
         return up;
@@ -59,8 +62,7 @@ action int_to_action(int i){
 }
 
 
-//Find the maximal possible outcome for a specific position
-
+// find the maximal gain among all actions for the state given as input
 double max_actions(int s){
     double max = q[s][0];
     for (int j=1; j<number_actions; j++){
@@ -71,8 +73,7 @@ double max_actions(int s){
     return max;
 }
 
-// Find the action that maximise the outcome for a specific position
-
+// find an action that leads to the maximal gain among all actions for the state given as input
 int best_action(int s){
     double max = q[s][0];
     int id_max = 0;
@@ -114,7 +115,7 @@ void epsilon_greedy(){
             tirage = rand() / (RAND_MAX + 1.0);
             
             if (tirage < epsilon){
-                next_action = actions_to_int(env_action_sample());
+                next_action = action_to_int(env_action_sample());
             }
             else {
                 next_action = best_action(s);
