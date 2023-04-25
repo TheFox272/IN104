@@ -203,6 +203,69 @@ void botzmann_exploration(){
 
 }
 
+void sarsa(){
+    for (int i = 0 ; i < number_episode ; i++){
+
+        printf("\r%.5f %%", 100 * (float)i/number_episode);
+        fflush(stdout);
+        
+        //Initialization of the variables 
+        int next_action;
+        double tirage;
+        struct envOutput EnvOut;
+        int next_s;
+        srand(time(NULL));
+        int n = 0; //Number of actions performed in the episode
+        int done = 0;
+
+        //Initialization of the state and action
+        int s = start_col + start_row*cols; 
+        int action = action_to_int(env_action_sample());
+
+
+        while (n<horizon){
+
+            if (epsilon != 1) epsilon = 0.1 + 0.9 * n / horizon;
+
+
+            //Updating the new state
+        
+            EnvOut = mazeEnv_step(int_to_action(next_action));
+            next_s = EnvOut.new_col + EnvOut.new_row*cols;
+            done = EnvOut.done;
+
+            /*Pick an action according to the epsilon greedy algorithm : the agent chooses a random action 
+            with probability epsilon, otherwise choose an action which maximises q(s, .)*/
+
+            tirage = rand() / (RAND_MAX + 1.0);
+            
+            if (tirage < epsilon){
+                next_action = action_to_int(env_action_sample());
+            }
+            else {
+                next_action = best_action(next_s);
+            }
+
+
+            // if we reach the goal, the deplacements are now entirely random
+            if (done == 1)
+            {
+                epsilon = 1;
+            }            
+
+            //Updating q
+            q[s][action] = q[s][action] + learning_rate*(EnvOut.reward + return_rate*q[next_s][next_action] - q[s][action]);
+
+            //Update the strating state and action for the next round
+            s = next_s;
+            action = next_action;
+            n++;
+        }
+        
+    }
+
+}
+
 //Visualise the values of the q table
 void visualise (){
     printf("\n");

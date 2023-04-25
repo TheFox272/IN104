@@ -35,11 +35,14 @@ void epsilon_greedy();
 
 void botzmann_exploration();
 
+void sarsa();
+
 void visualise();
 
 void print_q();
 
 void destroy_q();
+
 
 
 
