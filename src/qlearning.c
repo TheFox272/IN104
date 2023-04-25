@@ -104,12 +104,12 @@ void epsilon_greedy(){
         srand(time(NULL));
 
 
-        //Pick an action unless the goal is reached 
         while (n<horizon){
 
             if (epsilon != 1) epsilon = 0.1 + 0.9 * n / horizon;
 
-            //Pick an action according to the epsilon greedy algorithm
+            /*Pick an action according to the epsilon greedy algorithm : the agent chooses a random action 
+            with probability epsilon, otherwise choose an action which maximises q(s, .)*/
 
             tirage = rand() / (RAND_MAX + 1.0);
             
@@ -120,22 +120,17 @@ void epsilon_greedy(){
                 next_action = best_action(s);
             }
 
-            // printf("action : %d \n", n);
-            // printf("%d \n", next_action);
-
             //Updating Q with the new state
         
             EnvOut = mazeEnv_step(int_to_action(next_action));
             next_s = EnvOut.new_col + EnvOut.new_row*cols;
             done = EnvOut.done;
 
+            // if we reach the goal, the deplacements are now entirely random
             if (done == 1)
             {
                 epsilon = 1;
-            }
-
-            // mazeEnv_render_pos();
-            
+            }            
 
             q[s][next_action] = q[s][next_action] + learning_rate*(EnvOut.reward + return_rate*max_actions(next_s) - q[s][next_action]);
             s = next_s;
@@ -151,11 +146,9 @@ void botzmann_exploration(){
 
         printf("\r%.5f %%", 100 * (float)i/number_episode);
         fflush(stdout);
-        // printf("episode : %d \n", i);
 
         int s = start_col + start_row*cols; //Initialization of the state
         int n = 0; //Number of actions performed in the episode
-        int done = 0;
 
         //Initialization of the variables 
         int next_action;
@@ -169,10 +162,10 @@ void botzmann_exploration(){
         double e2;
 
 
-        //Pick an action unless the goal is reached 
         while (n<horizon){
 
-            //Pick an action according to the Botzmann exploration
+            /*Pick an action according to the Botzmann exploration : he agent chooses an action randomly with a
+            probability proportional to exp(q(s, a))*/
             total_exp = exp(q[s][0]) + exp(q[s][1]) + exp(q[s][2]) + exp(q[s][3]);
             e0 =  exp(q[s][0])/total_exp;
             e1 =  exp(q[s][1])/total_exp;
@@ -192,19 +185,11 @@ void botzmann_exploration(){
             else {
                 next_action = 3;
             }
-            // printf("action : %d \n", n);
-            // printf("%d \n", next_action);
-
             //Updating Q with the new state
         
             EnvOut = mazeEnv_step(int_to_action(next_action));
             next_s = EnvOut.new_col + EnvOut.new_row*cols;
-            done = EnvOut.done;
 
-            if (done == 1)
-            {
-                epsilon = 1;
-            }
 
             // mazeEnv_render_pos();
             
@@ -217,21 +202,26 @@ void botzmann_exploration(){
 
 }
 
-
+//Visualise the values of the q table
 void visualise (){
     printf("\n");
     for (int i = 0; i < rows; i++){
         for (int j = 0; j < cols; j++){
-            if (mazeEnv[i][j] == 'o' || mazeEnv[i][j] == 'k')
+            if (mazeEnv[i][j] == 'o' || mazeEnv[i][j] == 'k') //if the case has been explored
             {
+                /* If the best action of a state has a positive gain, the associated case will 
+                be printed in green. Otherwise it will be printed in red */
+
                 if (max_actions(j + i*cols) > 0.1)
                 {
-                    green();
+                    green(); 
                 }
                 else
                 {
                     red();
                 }
+
+                // for each state, we print an arrow representing the best action
                 switch (best_action(j + i*cols))
                 {
                 case 0:
@@ -250,6 +240,7 @@ void visualise (){
             }
             else
             {
+                //the walls are painted blue 
                 blue();
                 printf("%c ", mazeEnv[i][j]);
             }
@@ -259,6 +250,7 @@ void visualise (){
     }
 }
 
+//print the q matrix
 void print_q (){
     for (int i = 0; i < rows * cols; i++){
         printf("%d : up %lf down %lf right %lf left %lf \n", i, q[i][0], q[i][1], q[i][2], q[i][3]);
