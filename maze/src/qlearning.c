@@ -93,6 +93,7 @@ void epsilon_greedy(){
         fflush(stdout);
         // printf("episode : %d \n", i);
 
+        mazeEnv_reset();
         int s = start_col + start_row*cols; //Initialization of the state
         int n = 0; //Number of actions performed in the episode
         int done = 0;
@@ -148,6 +149,7 @@ void botzmann_exploration(){
         printf("\r%.5f %%", 100 * (float)i/number_episode);
         fflush(stdout);
 
+        mazeEnv_reset();
         int s = start_col + start_row*cols; //Initialization of the state
         int n = 0; //Number of actions performed in the episode
 
@@ -209,7 +211,8 @@ void sarsa(){
         printf("\r%.5f %%", 100 * (float)i/number_episode);
         fflush(stdout);
         
-        //Initialization of the variables 
+        //Initialization of the variables
+        mazeEnv_reset();
         int next_action;
         double tirage;
         struct envOutput EnvOut;
