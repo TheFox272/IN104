@@ -10,7 +10,7 @@ EXEC = main
 all: $(BUILD)$(EXEC)
 
 $(BUILD)$(EXEC): $(BUILD)main.o $(BUILD)mazeEnv.o $(BUILD)qlearning.o $(BUILD)colored_output.o $(BUILD)functions.o
-	$(CC) $(CFLAGS)  -g $^ -o $@ $(LIBS)
+	$(CC) $(CFLAGS) -g $^ -o $@ $(LIBS)
 
 $(BUILD)main.o: $(SRC)main.c $(INC)mazeEnv.h $(INC)qlearning.h 
 	mkdir -p $(dir $@)
