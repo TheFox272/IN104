@@ -51,11 +51,11 @@ int main(int argc, char** argv)
             strcat(levelName, ".txt");
             if (access(levelName, F_OK) == 0)
             {
-                printf("error: cannot overwrite " YELLOW "%s" RESET " in g mode (do it manually)\n", argv[2]);
+                printf("error: cannot overwrite " GREEN "%s" RESET " in g mode (do it manually)\n", argv[2]);
                 return -1;
             }
             if (generate_level(argv[2], atoi(argv[3])) == 0)
-                printf("Level " YELLOW "%s" RESET " generated successfully\n", argv[2]);
+                printf("Level " GREEN "%s" RESET " generated successfully\n", argv[2]);
             else
                 return -1;
         }
@@ -113,14 +113,18 @@ int main(int argc, char** argv)
             }
             else if (access(aiName, F_OK) == 0)
             {
-                printf("error: cannot overwrite " YELLOW "%s" RESET " in c mode (do it manually)\n", argv[2]);
+                printf("error: cannot overwrite " GREEN "%s" RESET " in c mode (do it manually)\n", argv[2]);
                 goto Abort_c;
             }
             nb_episode = atoi(argv[5]);
-            if (argc >= 7 && strcmp(argv[6], "h") == 0)  // h for hide
-                hide = 1;
-            else if (argc >= 7 && strcmp(argv[6], "hh") == 0)  // hh for hard hide
+            if ((argc >= 7 && strcmp(argv[6], "hh") == 0) || nb_episode > 1000)  // hh for hard hide
+            {
                 hide = 2;
+                if ((argc < 7 || strcmp(argv[6], "hh") != 0) && nb_episode > 1000)
+                    printf("warning: " YELLOW "nb_episode" RESET " is too high to show the training -> " YELLOW "(hide)" RESET " set to " YELLOW "hh" RESET "\n");
+            }
+            else if (argc >= 7 && strcmp(argv[6], "h") == 0)  // h for hide
+                hide = 1;
             else
             {
                 hide = 0;

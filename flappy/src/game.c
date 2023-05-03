@@ -21,35 +21,35 @@ int init(int ai)
     }
     else
     {
-        epsilon = 0.1; // used by the epsilon greedy method
-        ai_speed = 10; // can't be more than framePeriod
+        epsilon = 0.2;  // used by the epsilon greedy method
+        ai_speed = 10;  // can't be more than framePeriod
     }
-    learning_rate = 1.0; // the speed at which the weights of q will be changed (cf alpha in the lesson)
-    return_rate = 0.99;  // cf gamma in the lesson
-    ai_cycle = 12;
-    gateBonus = 10;
-    deathMalus = -100;
+    learning_rate = 1.0;  // the speed at which the weights of q will be changed (cf alpha in the lesson)
+    return_rate = 1.0;  // cf gamma in the lesson
+    ai_cycle = 15;
+    gateBonus = 64;
+    deathMalus = -32;
 
-    xTile = 30; // size of a cell tile on the xAxis
-    yTile = 20; // size of a cell tile on the yAxis
+    xTile = 30;  // size of a tile on the xAxis
+    yTile = 20;  // size of a tile on the yAxis
     // #endregion
 
     // #region : DO NOT CHANGE (or be very careful with it, those parameters are interlinked)
-    height = 640; // height of the playscreen
+    height = 640;  // height of the playscreen
     width = 380;  // distance between two pillars
     xOrigin = 120;
-    wMargin = 50; // width margin (2 * wMargin + width = screen width)
+    wMargin = 50;  // width margin (2 * wMargin + width = screen width)
     flappySize = 30;
-    pWidth = 90;        // width of a pillar (width of a gate)
-    pSpace = 150;       // height of a gate
-    g = 0.3;            // gravity strength
-    jPower = 6.5;       // jump strength
-    x = flappySize / 2; // x position relative to previous pillar
+    pWidth = 90;  // width of a pillar (width of a gate)
+    pSpace = 150;  // height of a gate
+    g = 0.3;  // gravity strength
+    jPower = 6.5;  // jump strength
+    x = flappySize / 2;  // x position relative to previous pillar
     y = height / 2;
-    dx = 2;                                 // scrolling speed
-    dy = 0;                                 // y speed initialization
-    score = 0;                              // number of pillars passed
-    framePeriod = (int)(10 / ai_speed) + 1; // in ms
+    dx = 2;  // scrolling speed
+    dy = 0;  // y speed initialization
+    score = 0;  // number of pillars passed
+    framePeriod = (int)(10 / ai_speed) + 1;  // in ms
     start = 0;
     // #endregion
 
@@ -57,7 +57,7 @@ int init(int ai)
 }
 
 
-int next(int jump) // jump = 1 if flappy jumps, 0 if he waits
+int next(int jump)  // jump = 1 if flappy jumps, 0 if he waits
 {
     if (start)
     {
@@ -157,7 +157,7 @@ int load_level(char levelName[21])
     FILE *f = fopen(filename, "r");
     if (f == NULL)
     {
-        printf("error reading the file " YELLOW "%s" RESET "\n", filename);
+        printf("error reading the file " GREEN "%s" RESET "\n", filename);
         return -1;
     }
     char temp[10];
@@ -170,19 +170,19 @@ int load_level(char levelName[21])
             pillarsY[i] = atoi(temp);
         else
         {
-            printf("error reading the file " YELLOW "%s" RESET " : too short for indicated size\n", filename);
+            printf("error reading the file " GREEN "%s" RESET " : too short for indicated size\n", filename);
             free(pillarsY);
             return -1;
         }
     }
     if (fgets(temp, 10, f))
     {
-        printf("error reading the file " YELLOW "%s" RESET " : too long for indicated size\n", filename);
+        printf("error reading the file " GREEN "%s" RESET " : too long for indicated size\n", filename);
         free(pillarsY);
         return -1;
     }
     else
-        printf("successfully loaded the level from the file " YELLOW "%s" RESET "\n", filename);
+        printf("successfully loaded the level from the file " GREEN "%s" RESET "\n", filename);
     fclose(f);
     return 0;
 }

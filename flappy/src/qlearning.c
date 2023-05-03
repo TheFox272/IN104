@@ -14,8 +14,8 @@ int init_q()
 {
     xRows = (int)(width / xTile) + 1;
     yPRows = (int)((2 * height - 4 * pSpace) / yTile) + 1;
-    dyMin = -18 / 2;
-    dyMax = 7 / 2;
+    dyMin = -12 / 2;  // based on observation min speed = -18
+    dyMax = 4 / 2;  // based on observation max speed = 7
     dyRows = dyMax - dyMin + 2;
     nb_actions = 2;
 
@@ -72,7 +72,7 @@ int trainAI(int aiModel, char aiName[26])  // aiModel = 1 for epsilon_greedy, 2 
     episode_done = 0;
     for (int i = 0 ; i < nb_episode ; i++)
     {
-        printf("\r%.5f %%", 100 * (float)i/nb_episode);
+        printf("\r%.5f %%", 100 * (float)(i+1)/nb_episode);
         fflush(stdout);
         init(1);
         statut = play(-aiModel);
@@ -86,12 +86,12 @@ int trainAI(int aiModel, char aiName[26])  // aiModel = 1 for epsilon_greedy, 2 
         {
             printf("\n");
             if (save_q(aiName) == 0)
-                printf(RED "safety:" RESET " q successfully saved as " YELLOW "%s" RESET "\n", aiName);
+                printf(RED "safety save:" RESET " q successfully saved as " GREEN "%s" RESET "\n", aiName);
         }
     }
     printf("\n");
     if (save_q(aiName) == 0)
-        printf("q successfully saved as " YELLOW "%s" RESET "\n", aiName);
+        printf("q successfully saved as " GREEN "%s" RESET "\n", aiName);
     if (hide <= 1)
     {
         init(0);
@@ -102,8 +102,8 @@ int trainAI(int aiModel, char aiName[26])  // aiModel = 1 for epsilon_greedy, 2 
             return statut;
         }
     }
-    printf("successfully trained AI " YELLOW "%s" RESET " based on model " YELLOW "%d" RESET, aiName, aiModel);
-    printf(" (it is now " GREEN "%d" RESET " episodes old)\n", old_nb_episode + episode_done);
+    printf("successfully trained AI " GREEN "%s" RESET " based on model " YELLOW "%d" RESET, aiName, aiModel);
+    printf(" (it is now " PURPLE "%d" RESET " episodes old)\n", old_nb_episode + episode_done);
     return 0;
 }
 
@@ -116,7 +116,7 @@ int save_q(char aiName[26])
     FILE *f = fopen(filename, "w");
     if (f == NULL)
     {
-        printf("error creating the file " YELLOW "%s" RESET "\n", filename);
+        printf("error creating the file " GREEN "%s" RESET "\n", filename);
         return -1;
     }
 
@@ -153,7 +153,7 @@ int load_q(char aiName[26])
     FILE *f = fopen(filename, "r");
     if (f == NULL)
     {
-        printf("error reading the file " YELLOW "%s" RESET "\n", filename);
+        printf("error reading the file " GREEN "%s" RESET "\n", filename);
         return -1;
     }
     char temp[20];
@@ -162,21 +162,21 @@ int load_q(char aiName[26])
     fgets(temp, 10, f);
     if (xRows != atoi(temp))
     {
-        printf("error: AI " YELLOW "%s" RESET " is using a different " RED "xRows" RESET " number", aiName);
+        printf("error: AI " GREEN "%s" RESET " is using a different " RED "xRows" RESET " number", aiName);
         status = -2;
         goto Close;
     }
     fgets(temp, 10, f);
     if (yPRows != atoi(temp))
     {
-        printf("error: AI " YELLOW "%s" RESET " is using a different " RED "yPRows" RESET " number", aiName);
+        printf("error: AI " GREEN "%s" RESET " is using a different " RED "yPRows" RESET " number", aiName);
         status = -2;
         goto Close;
     }
     fgets(temp, 10, f);
     if (dyRows != atoi(temp))
     {
-        printf("error: AI " YELLOW "%s" RESET " is using a different " RED "dyRows" RESET " number", aiName);
+        printf("error: AI " GREEN "%s" RESET " is using a different " RED "dyRows" RESET " number", aiName);
         status = -2;
         goto Close;
     }
@@ -193,7 +193,7 @@ int load_q(char aiName[26])
                         q[a][b][c][d] = atof(temp);
                     else
                     {
-                        printf("error reading the file " YELLOW "%s" RESET " : too short for indicated size\n", filename);
+                        printf("error reading the file " GREEN "%s" RESET " : too short for indicated size\n", filename);
                         status = -1;
                         goto Close;
                     }
@@ -203,12 +203,12 @@ int load_q(char aiName[26])
     }
     if (fgets(temp, 10, f))
     {
-        printf("error reading the file " YELLOW "%s" RESET " : too long for indicated size\n", filename);
+        printf("error reading the file " GREEN "%s" RESET " : too long for indicated size\n", filename);
         status = -1;
         goto Close;
     }
     else
-        printf("successfully loaded q from the file " YELLOW "%s" RESET "\n", filename);
+        printf("successfully loaded q from the file " GREEN "%s" RESET "\n", filename);
 
 Close:
     fclose(f);
