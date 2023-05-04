@@ -116,6 +116,11 @@ int main(int argc, char** argv)
                 printf("error: cannot overwrite " GREEN "%s" RESET " in c mode (do it manually)\n", argv[2]);
                 goto Abort_c;
             }
+            if (atoi(argv[4]) != 1 && atoi(argv[4]) != 2)
+            {
+                printf("error: AI model " YELLOW "%s" RESET " does not exist\n", argv[4]);
+                goto Abort_c;
+            }
             nb_episode = atoi(argv[5]);
             if ((argc >= 7 && strcmp(argv[6], "hh") == 0) || nb_episode > 1000)  // hh for hard hide
             {
@@ -178,6 +183,13 @@ Abort_c:
                 printf("error while loading q\n");
                 goto Abort_l;
             }
+            if (argc >= 5)
+            {
+                if (strcmp(argv[4], "s") == 0)
+                    hide = -1;
+                else if (strcmp(argv[4], "ss") == 0)
+                    hide = -2;
+            }
             play(1);
 Abort_l:
             destroy_q();
@@ -193,6 +205,9 @@ Abort_l:
             printf("-> " YELLOW "levelName" RESET " is the name of the level that the AI will play on (see list below).");
             printf(" If they is no existing level, maybe use " YELLOW "main g" RESET " first\n");
             ls("../data/levels");
+            printf("-> " YELLOW "(show)" RESET " is an optional parameter.");
+            printf(" Set it to " YELLOW "s" RESET " to show the marks of prefered jumping spots.");
+            printf(" Set it to " YELLOW "ss" RESET " do the previous thing and slow down time\n");
             return -1;
         }
     }
