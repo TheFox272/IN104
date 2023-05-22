@@ -5,7 +5,7 @@
 
 This is a repository dedicated to our Reinforcement Learning (RL) project of ENSTA's IN104 course. It is made of 2 parts :
 - [x] An introduction to the concept of RL : maze resolution
-- [ ] A personal project using RL : flappy
+- [x] A personal project using RL : flappy
 
 Our RL methods revolve around the **Q-learning** algorithm. Up to now, we implemented 2 versions of it :
 - ε-greedy
