@@ -16,23 +16,22 @@ int init(int ai)
     if (!ai)
     {
         hide = 0;
-        epsilon = 0;
         ai_speed = 1;
     }
     else
-    {
-        epsilon = 0.02;  // used by the epsilon greedy method
         ai_speed = 10;  // can't be more than framePeriod
-    }
-    learning_rate = 1.0;  // the speed at which the weights of q will be changed (cf alpha in the lesson)
-    return_rate = 0.95;  // cf gamma in the lesson
+    
+    epsilon_max = 0.2;
+    learning_rate_max = 1.0;  // decay per 100 episodes
+    return_rate = 0.99;  // cf gamma in the lesson
     ai_cycle = 15;
-    gateBonus = 64;
-    deathMalus = -32;
-
-    xTile = 30;  // size of a tile on the xAxis
-    yTile = 20;  // size of a tile on the yAxis
+    gateBonus = 16;
+    deathMalus = -8;
+    xTile = 25;  // size of a tile on the xAxis
+    yTile = 10;  // size of a tile on the yAxis
     // #endregion
+
+    stuckTime = 0;
 
     // #region : DO NOT CHANGE (or be very careful with it, those parameters are interlinked)
     height = 640;  // height of the playscreen
@@ -44,15 +43,35 @@ int init(int ai)
     pSpace = 150;  // height of a gate
     g = 0.3;  // gravity strength
     jPower = 6.5;  // jump strength
-    x = pWidth + flappySize / 2; // x position relative to previous pillar
-    y = height / 2;
     dx = 2;  // scrolling speed
-    dy = 0;  // y speed initialization
-    score = 0;  // number of pillars passed
+    maxScore = 0;
     framePeriod = (int)(10 / ai_speed) + 1;  // in ms
-    start = 0;
     // #endregion
 
+    init_pos(ai);
+
+    return 0;
+}
+
+
+int init_pos(int ai)
+{
+    x = pWidth + flappySize / 2; // x position relative to previous pillar
+    y = height / 2;
+    dy = 0;
+    score = 0;  // number of pillars passed
+    start = 0;
+    if (ai)
+    {
+        epsilon = 100 / (1000 + 4000 * maxScore);  // used by the epsilon greedy method
+        learning_rate = 0.4;  // the speed at which the weights of q will be changed (cf alpha in the lesson)
+    }
+    else
+    {
+        epsilon = 0;
+        learning_rate = 0;
+    }
+    
     return 0;
 }
 
@@ -73,21 +92,23 @@ int next(int jump)  // jump = 1 if flappy jumps, 0 if he waits
         {
             x = 0;
             score += 1;
+            if (score >= maxScore)
+                maxScore = score;
             yP1 = pillarsY[score];
             if (score + 1 < levelSize)
                 yP2 = pillarsY[score + 1];
             else
                 yP2 = -1;
         }
-        return 0;
     }
     else
     {
         start = 1;
         yP1 = pillarsY[score];
         yP2 = pillarsY[score + 1];
-        return 0;
     }
+    
+    return 0;
 }
 
 
@@ -123,7 +144,7 @@ void actualise_state(state *s, double x, double y)
     else if (yPRow > (int)((2 * height - 4 * pSpace) / yTile))
         yPRow = (int)((2 * height - 4 * pSpace) / yTile);
     s->yPRow = yPRow;
-    int dyRow = (int)(dy / 3);
+    int dyRow = (int)(dy / 1);
     if (dyRow < dyMin)
         s->dyRow = 0;
     else if (dyRow >= dyMax)
@@ -287,6 +308,7 @@ int play(int ai)  // ai = 0 for manual, -1 for epsilon greedy without display, 1
     double q_value;
     if (ai)
         actualise_state(&old_state, x, y);
+        
     // #endregion
 
     while (wait || (!dead(&flappyRect, pillarRects) && !quit))
@@ -312,8 +334,8 @@ int play(int ai)  // ai = 0 for manual, -1 for epsilon greedy without display, 1
 
         if (ai)
         {
-            cycle += fmax(dx / xTile, dy / yTile) * (ai_cycle + 1);
-            if (cycle >= ai_cycle)
+            cycle += fmax(1 * dx / xTile, abs(dy) / yTile) * (ai_cycle - 9);
+            if (cycle >= ai_cycle && dy < 1)
             {
                 cycle = 0;
                 actualise_state(&new_state, x, y);
@@ -346,9 +368,14 @@ int play(int ai)  // ai = 0 for manual, -1 for epsilon greedy without display, 1
                 old_state.jump = (int)jump;
             }
         }
-           
 
         next(jump);
+        if (ai && epsilon != epsilon_max && score >= maxScore)
+        {
+            epsilon = epsilon_max;
+            learning_rate = learning_rate_max;
+            // printf("%d\n", maxScore);
+        }
 
         if (hide <= 0)
         {
@@ -581,6 +608,22 @@ int play(int ai)  // ai = 0 for manual, -1 for epsilon greedy without display, 1
             printf("Victory for flappy!\n");
         }
     }
+    // printf(" %d %d\n", score, maxScore);
+    if (score >= maxScore)
+    {
+        maxScore = score;
+        stuckTime = 0;
+    }
+    else
+    {
+        stuckTime++;
+        if (stuckTime > 80)
+        {
+            maxScore = score;
+            stuckTime = 0;
+        }
+    }
+        
 
     statut = EXIT_SUCCESS;
 

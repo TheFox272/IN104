@@ -30,6 +30,7 @@ extern double dx;
 extern double dy;
 extern int levelSize;
 extern int score;
+extern int maxScore;
 extern int framePeriod;
 extern int* pillarsY;
 extern int start;
@@ -47,13 +48,16 @@ extern int hide;
 extern int nb_episode;
 extern int old_nb_episode;
 extern int episode_done;
-extern double learning_rate;
-extern double return_rate;
 extern double epsilon;
+extern double epsilon_max;
+extern double learning_rate;
+extern double learning_rate_max;
+extern double return_rate;
 extern int ai_cycle;
 extern double ai_speed;
 extern double gateBonus;
 extern double deathMalus;
+extern int stuckTime;
 
 typedef struct
 {
@@ -64,6 +68,8 @@ typedef struct
 } state;
 
 int init(int);
+
+int init_pos(int);
 
 int next(int);
 

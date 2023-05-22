@@ -32,6 +32,7 @@ double dx;
 double dy;
 int levelSize;
 int score;
+int maxScore;
 int framePeriod;
 int* pillarsY;
 int start;
@@ -49,12 +50,15 @@ int hide;
 int nb_episode;
 int old_nb_episode;
 int episode_done;
-double learning_rate;
-double return_rate;
 double epsilon;
+double epsilon_max;
+double learning_rate;
+double learning_rate_max;
+double return_rate;
 int ai_cycle;
 double ai_speed;
 double gateBonus;
 double deathMalus;
+int stuckTime;
 
 #endif

@@ -30,6 +30,7 @@ int generate_level(char name[21], int size)
 
     fprintf(f, "%d\n", size + 1);
     fprintf(f, "%d\n", (int)(height/2 - pSpace/2));
+    srand(time(NULL));
     for (int i = 1 ; i < size+1 ; i++)
     {
         fprintf(f, "%d\n", (int)rand() % (int)(height - pSpace));

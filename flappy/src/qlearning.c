@@ -14,8 +14,8 @@ int init_q()
 {
     xRows = (int)(width / xTile) + 1;
     yPRows = (int)((2 * height - 4 * pSpace) / yTile) + 1;
-    dyMin = -12 / 2;  // based on observation min speed = -18
-    dyMax = 4 / 2;  // based on observation max speed = 7
+    dyMin = -12 / 1;  // based on observation min speed = -18
+    dyMax = 1 / 1;  // based on observation max speed = 7
     dyRows = dyMax - dyMin + 2;
     nb_actions = 2;
 
@@ -74,28 +74,34 @@ int trainAI(int aiModel, char aiName[26])  // aiModel = 1 for epsilon_greedy, 2 
     {
         printf("\r%.5f %%", 100 * (float)(i+1)/nb_episode);
         fflush(stdout);
-        init(1);
+        init_pos(1);
         statut = play(-aiModel);
         if (statut != 0)
         {
             printf("error while training AI\n");
             return statut;
         }
+        
         episode_done++;
-        if ((i+1) % 5000 == 0)  // safety save every 5k iteration (useful to not lose a night's work)
+        if ((i+1) % 10 == 0)
         {
-            printf("\n");
-            if (save_q(aiName) == 0)
-                printf(RED "safety save:" RESET " q successfully saved as " GREEN "%s" RESET "\n", aiName);
+            save_q_history(aiName);
+            if ((i+1) % 1000 == 0)  // safety save every 5k iteration (useful to not lose a night's work)
+            {
+                printf("\n");
+                if (save_q(aiName) == 0)
+                    printf(RED "safety save:" RESET " q successfully saved as " GREEN "%s" RESET "\n", aiName);
+            }
         }
+        
     }
     printf("\n");
     if (save_q(aiName) == 0)
         printf("q successfully saved as " GREEN "%s" RESET "\n", aiName);
     if (hide <= 1)
     {
-        init(0);
-        statut = play(aiModel);
+        init_pos(0);
+        statut = play(1);
         if (statut != 0)
         {
             printf("error while showing AI\n");
@@ -104,6 +110,26 @@ int trainAI(int aiModel, char aiName[26])  // aiModel = 1 for epsilon_greedy, 2 
     }
     printf("successfully trained AI " GREEN "%s" RESET " based on model " YELLOW "%d" RESET, aiName, aiModel);
     printf(" (it is now " PURPLE "%d" RESET " episodes old)\n", old_nb_episode + episode_done);
+    return 0;
+}
+
+
+int save_q_history(char aiName[26])
+{
+    char filename[48] = "../data/q/";
+    strcat(filename, aiName);
+    strcat(filename, "_history.txt");
+    FILE *f = fopen(filename, "a");
+    if (f == NULL)
+    {
+        printf("error creating the file " GREEN "%s" RESET "\n", filename);
+        return -1;
+    }
+
+    fprintf(f, "%d\n", maxScore);
+
+    fclose(f);
+
     return 0;
 }
 
@@ -121,6 +147,7 @@ int save_q(char aiName[26])
     }
 
     fprintf(f, "%d\n", old_nb_episode + episode_done);
+    fprintf(f, "%d\n", maxScore);
     fprintf(f, "%d\n", xRows);
     fprintf(f, "%d\n", yPRows);
     fprintf(f, "%d\n", dyRows);
@@ -159,6 +186,8 @@ int load_q(char aiName[26])
     char temp[20];
     fgets(temp, 10, f);
     old_nb_episode = atoi(temp);
+    fgets(temp, 10, f);
+    maxScore = atoi(temp);
     fgets(temp, 10, f);
     if (xRows != atoi(temp))
     {
